@@ -1,0 +1,10 @@
+{
+  "name": "my-site",
+  "main": "worker.js",
+  "compatibility_date": "2025-12-11",
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS",
+    "exclude": ["functions/**"]   // <-- important
+  }
+}
