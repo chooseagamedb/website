@@ -1,5 +1,4 @@
 import * as hello from "./functions/api/hello.js";
-import * as test from "./functions/api/test.js";
 // Add more imports as needed
 
 const routes = {
