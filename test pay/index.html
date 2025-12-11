@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Store</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 800px; margin: 0 auto; }
+        button { background: #007bff; color: white; border: none; padding: 12px 24px; 
+                 margin: 10px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .result { background: #f0f0f0; padding: 15px; margin: 20px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🛒 Test Store</h1>
+    <p>Click to test ₹1 payment:</p>
+    
+    <button onclick="pay(1)">Pay ₹1</button>
+    <button onclick="pay(10)">Pay ₹10</button>
+    <button onclick="pay(100)">Pay ₹100</button>
+    
+    <div id="result" class="result"></div>
+    
+    <script>
+    async function pay(amount) {
+        document.getElementById('result').innerHTML = "Creating order...";
+        
+        // Call YOUR Cloudflare function
+        const response = await fetch('/api/create-order', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ amount: amount })
+        });
+        
+        const order = await response.json();
+        
+        // Razorpay checkout
+        const options = {
+            key: "rzp_test_xxxxxxxxxxxx", // Replace with YOUR test key
+            amount: order.amount * 100, // in paise
+            currency: "INR",
+            name: "Test Store",
+            description: "Test Payment",
+            order_id: order.razorpayOrderId,
+            handler: function(response) {
+                document.getElementById('result').innerHTML = 
+                    `✅ Payment Successful!<br>
+                     Payment ID: ${response.razorpay_payment_id}<br>
+                     Order ID: ${response.razorpay_order_id}`;
+            },
+            prefill: {
+                name: "Test Customer",
+                email: "test@example.com",
+                contact: "9999999999"
+            },
+            theme: {
+                color: "#007bff"
+            }
+        };
+        
+        const razorpay = new Razorpay(options);
+        razorpay.open();
+    }
+    </script>
+</body>
+</html>
